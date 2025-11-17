@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>StudentScore ML</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+  <style>
+    /* Simple, clean, light UI */
+    :root{--bg:#f7fafc;--card:#ffffff;--muted:#64748b;--accent:#4f46e5;--border:#d9e2ec;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial}
+    html,body{height:100%;margin:0;background:linear-gradient(135deg,#f7fafc 0%, #dff3ff 40%, #c6e7ff 100%);color:#0f172a}
+
+    .wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:32px}
+    .container{width:100%;max-width:900px}
+
+    .card{background:#ffffff;border:1px solid var(--border);border-radius:14px;padding:24px;box-shadow:0 4px 14px rgba(0,0,0,0.06);margin-bottom:16px}
+    .brand{font-weight:700;color:var(--accent);letter-spacing:0.2px}
+    h2{margin:0;font-size:20px}
+    p.lead{margin:6px 0 0;color:var(--muted);font-size:14px}
+
+    form{margin-top:12px}
+    .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    @media(max-width:640px){.grid{grid-template-columns:1fr}}
+
+    label{display:block;font-size:13px;color:#0f172a;margin-bottom:6px;font-weight:600}
+    select,input[type=number]{width:100%;padding:10px 12px;border-radius:8px;border:1px solid var(--border);background:#ffffff;}
+    input[type=number]::placeholder{color:var(--muted)}
+
+    .actions{display:flex;justify-content:space-between;align-items:center;margin-top:18px}
+    .note{font-size:13px;color:var(--muted)}
+    .btn{background:var(--accent);color:white;border:none;padding:10px 14px;border-radius:8px;cursor:pointer}
+    .btn.secondary{background:transparent;color:var(--accent);border:1px solid var(--accent)}
+
+    .result{margin-top:18px;padding:12px;border-radius:8px;background:#f0fdfa;border:1px solid rgba(14,165,164,0.12);display:flex;align-items:center;gap:10px}
+    .result strong{color:#065f5a}
+
+    footer{margin-top:14px;text-align:center;color:var(--muted);font-size:13px}
+
+    /* small helper */
+    .full{grid-column:1/ -1}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="container">
+      <div class="card">
+        <div class="header">
+          <div>
+            <div class="brand">StudentScore ML</div>
+            <h2>Student Exam Performance Predictor</h2>
+            <p class="lead">Simple and clear — enter details and get a predicted score (ML model).</p>
+          </div>
+          <div style="text-align:right">
+            <small class="note">Model: lightweight demo</small>
+          </div>
+        </div>
+
+        <!-- Form (Flask) -->
+        <form action="{{ url_for('predict_datapoint') }}" method="post" novalidate>
+          <div class="grid">
+            <div>
+              <label for="gender">Gender</label>
+              <select id="gender" name="gender" required>
+                <option value="" disabled selected>Select</option>
+                <option value="male">Male</option>
+                <option value="female">Female</option>
+              </select>
+            </div>
+
+            <div>
+              <label for="ethnicity">Race / Ethnicity</label>
+              <select id="ethnicity" name="ethnicity" required>
+                <option value="" disabled selected>Select</option>
+                <option value="group A">Group A</option>
+                <option value="group B">Group B</option>
+                <option value="group C">Group C</option>
+                <option value="group D">Group D</option>
+                <option value="group E">Group E</option>
+              </select>
+            </div>
+
+            <div>
+              <label for="parental">Parental Level of Education</label>
+              <select id="parental" name="parental_level_of_education" required>
+                <option value="" disabled selected>Select</option>
+                <option value="associate's degree">Associate's degree</option>
+                <option value="bachelor's degree">Bachelor's degree</option>
+                <option value="high school">High school</option>
+                <option value="master's degree">Master's degree</option>
+                <option value="some college">Some college</option>
+                <option value="some high school">Some high school</option>
+              </select>
+            </div>
+
+            <div>
+              <label for="lunch">Lunch Type</label>
+              <select id="lunch" name="lunch" required>
+                <option value="" disabled selected>Select</option>
+                <option value="free/reduced">Free / Reduced</option>
+                <option value="standard">Standard</option>
+              </select>
+            </div>
+
+            <div>
+              <label for="test_prep">Test Preparation</label>
+              <select id="test_prep" name="test_preparation_course" required>
+                <option value="" disabled selected>Select</option>
+                <option value="none">None</option>
+                <option value="completed">Completed</option>
+              </select>
+            </div>
+
+            <div>
+              <label for="reading">Reading Score (0–100)</label>
+              <input id="reading" name="reading_score" type="number" min="0" max="100" placeholder="e.g. 78" required />
+            </div>
+
+            <div>
+              <label for="writing">Writing Score (0–100)</label>
+              <input id="writing" name="writing_score" type="number" min="0" max="100" placeholder="e.g. 81" required />
+            </div>
+
+            <div class="full">
+              <div class="actions">
+                <div class="note">All fields required except scores are optional for a quick check.</div>
+                <div>
+                  <button type="reset" class="btn secondary">Reset</button>
+                  <button type="submit" class="btn" style="margin-left:8px">Predict</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </form>
+
+        <!-- Result area -->
+        <div class="result" aria-live="polite">
+          <div>Prediction — Score:</div>
+          <div><strong>{{ results }}</strong></div>
+        </div>
+
+      </div>
+      <footer>
+        © StudentScore ML • Made with ❤️ by Aarav
+      </footer>
+    </div>
+  </div>
+</body>
+</html>
