@@ -39,6 +39,26 @@
     /* small helper */
     .full{grid-column:1/ -1}
   </style>
+<script>
+  function clearForm(){
+    const form = document.querySelector('form');
+    if (!form) return;
+
+    // Clear inputs
+    form.querySelectorAll('input[type="number"]').forEach(i => i.value = '');
+
+    // Reset selects to first disabled option
+    form.querySelectorAll('select').forEach(s => {
+      s.selectedIndex = 0;
+    });
+
+    // Remove result box if present
+    const result = document.querySelector('.result');
+    if (result) result.remove();
+  }
+</script>
+
+
 </head>
 <body>
   <div class="wrap">
@@ -124,7 +144,11 @@
               <div class="actions">
                 <div class="note">All fields required except scores are optional for a quick check.</div>
                 <div>
-                  <button type="reset" class="btn secondary">Reset</button>
+                  <!-- <button type="reset" class="btn secondary">Reset</button>
+                    -->
+                  <button type="button" class="btn secondary" onclick="clearForm()">Reset</button>
+
+                  
                   <button type="submit" class="btn" style="margin-left:8px">Predict</button>
                 </div>
               </div>
